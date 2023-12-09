@@ -2,32 +2,36 @@ package com.ecommerce.migdev.app.service;
 
 import java.util.Optional;
 
-import com.ecommerce.migdev.app.model.Producto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.ecommerce.migdev.app.model.Producto;
+import com.ecommerce.migdev.app.repository.ProductoRepository;
+
+@Service
 public class ProductoServiceImpl implements ProductoService {
 
+	@Autowired
+	private ProductoRepository repo;
+	
 	@Override
 	public Producto guardar(Producto producto) {
-		// TODO Auto-generated method stub
-		return null;
+		return repo.save(producto);
 	}
 
 	@Override
 	public Optional<Producto> Obtener(Integer id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return repo.findById(id);
 	}
 
 	@Override
 	public void editar(Producto producto) {
-		// TODO Auto-generated method stub
-
+		repo.save(producto);
 	}
 
 	@Override
 	public void eliminar(Integer id) {
-		// TODO Auto-generated method stub
-
+		repo.deleteById(id);
 	}
 
 }
