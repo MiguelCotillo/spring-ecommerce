@@ -1,5 +1,6 @@
 package com.ecommerce.migdev.app.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class ProductoServiceImpl implements ProductoService {
 	@Override
 	public void eliminar(Integer id) {
 		repo.deleteById(id);
+	}
+
+	@Override
+	public List<Producto> Listar() {
+		return repo.findAll();
 	}
 
 }
