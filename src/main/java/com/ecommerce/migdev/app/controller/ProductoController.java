@@ -1,5 +1,6 @@
 package com.ecommerce.migdev.app.controller;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.migdev.app.model.Producto;
 import com.ecommerce.migdev.app.model.Usuario;
 import com.ecommerce.migdev.app.service.ProductoService;
+import com.ecommerce.migdev.app.service.UploadFileService;
 
 @Controller
 @RequestMapping("productos")
@@ -24,6 +28,9 @@ public class ProductoController {
 	
 	@Autowired
 	private ProductoService serv;
+	
+	@Autowired
+	private UploadFileService i;
 
 	@GetMapping("")
 	public String show(Model model) {
@@ -37,10 +44,25 @@ public class ProductoController {
 	}
 	
 	@PostMapping("/guardar")
-	public String guardar( Producto producto) {
+	public String guardar( Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
 		LOGGER.info("Este es el objeto producto {} ", producto);
 		Usuario u = new Usuario(1, "", "", "", "", "", "", "");
 		producto.setUsuario(u);
+		
+		if (producto.getId() == null) { 
+			String nImagen = i.guardarImagen(file);
+			producto.setImagen(nImagen);
+		}else {
+			if (file.isEmpty()) {
+				Producto p = new Producto();
+				p = serv.Obtener(producto.getId()).get();
+				producto.setImagen(p.getImagen());
+			}else {
+				String nImagen = i.guardarImagen(file);
+				producto.setImagen(nImagen);
+			}
+		}
+		
 		serv.guardar(producto);
 		return "redirect:/productos";
 	}
